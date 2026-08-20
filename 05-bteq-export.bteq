@@ -1,0 +1,72 @@
+/* ========================================================================== */
+/* BTEQ Export Script                                                        */
+/* Demonstrates data export to file using BTEQ                               */
+/* Run: bteq < 05-bteq-export.bteq                                           */
+/* ========================================================================== */
+
+/* Connect using environment variables */
+.LOGON ${DB_HOST}/${DB_USERNAME},${DB_PASSWORD};
+
+/* Set database context */
+DATABASE ${DB_USERNAME}_DEMO;
+
+/* Configure export settings */
+.SET WIDTH 200;
+.SET RECORDMODE OFF;
+
+/* Export employee data to file */
+.EXPORT DATA FILE=/workspace/employee_export.txt;
+
+SELECT
+    EMP_ID,
+    FIRST_NAME || ' ' || LAST_NAME AS FULL_NAME,
+    EMAIL,
+    JOB_TITLE,
+    HIRE_DATE,
+    SALARY
+FROM EMPLOYEE
+ORDER BY EMP_ID;
+
+.EXPORT RESET;
+
+/* Export department summary to file */
+.EXPORT DATA FILE=/workspace/department_summary.txt;
+
+SELECT
+    d.DEPT_NAME,
+    d.LOCATION,
+    COUNT(e.EMP_ID) AS EMPLOYEE_COUNT,
+    COALESCE(AVG(e.SALARY), 0) (FORMAT 'ZZZ,ZZ9.99') AS AVG_SALARY,
+    COALESCE(SUM(e.SALARY), 0) (FORMAT 'ZZZ,ZZZ,ZZ9.99') AS TOTAL_PAYROLL
+FROM DEPARTMENT d
+LEFT JOIN EMPLOYEE e ON d.DEPT_ID = e.DEPT_ID
+GROUP BY d.DEPT_NAME, d.LOCATION
+ORDER BY d.DEPT_NAME;
+
+.EXPORT RESET;
+
+/* Export sales by region */
+.EXPORT DATA FILE=/workspace/sales_by_region.txt;
+
+SELECT
+    REGION,
+    COUNT(*) AS TOTAL_SALES,
+    SUM(QUANTITY) AS TOTAL_QUANTITY,
+    SUM(SALE_AMOUNT) (FORMAT 'ZZZ,ZZZ,ZZ9.99') AS TOTAL_REVENUE
+FROM SALES
+GROUP BY REGION
+ORDER BY REGION;
+
+.EXPORT RESET;
+
+/* Confirm exports */
+.SET TITLEDASHES ON;
+
+SELECT '*** Export completed successfully! ***' AS STATUS;
+SELECT 'Files created in /workspace:' AS INFO;
+SELECT '  - employee_export.txt' AS FILE_1;
+SELECT '  - department_summary.txt' AS FILE_2;
+SELECT '  - sales_by_region.txt' AS FILE_3;
+
+.LOGOFF;
+.QUIT 0;

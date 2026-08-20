@@ -1,0 +1,108 @@
+/* ========================================================================== */
+/* BTEQ Formatted Report                                                     */
+/* Demonstrates formatted reporting with BTEQ                                */
+/* Run: bteq < 06-bteq-report.bteq                                           */
+/* ========================================================================== */
+
+/* Connect using environment variables */
+.LOGON ${DB_HOST}/${DB_USERNAME},${DB_PASSWORD};
+
+/* Set database context */
+DATABASE ${DB_USERNAME}_DEMO;
+
+/* Configure report format */
+.SET WIDTH 132;
+.SET PAGELENGTH 60;
+.SET TITLEDASHES ON;
+.SET HEADING ON;
+
+/* ========================================================================== */
+/* Report 1: Employee Directory by Department                                */
+/* ========================================================================== */
+
+.HEADING 'EMPLOYEE DIRECTORY REPORT';
+.SET SEPARATOR '|';
+
+SELECT
+    d.DEPT_NAME (TITLE 'Department'),
+    e.FIRST_NAME || ' ' || e.LAST_NAME (TITLE 'Employee Name'),
+    e.JOB_TITLE (TITLE 'Job Title'),
+    e.EMAIL (TITLE 'Email Address'),
+    e.HIRE_DATE (TITLE 'Hire Date'),
+    e.SALARY (FORMAT 'ZZZ,ZZ9.99')(TITLE 'Salary')
+FROM EMPLOYEE e
+INNER JOIN DEPARTMENT d ON e.DEPT_ID = d.DEPT_ID
+ORDER BY d.DEPT_NAME, e.LAST_NAME;
+
+.HEADING OFF;
+
+/* ========================================================================== */
+/* Report 2: Department Summary with Statistics                              */
+/* ========================================================================== */
+
+.HEADING 'DEPARTMENT SUMMARY REPORT';
+
+SELECT
+    d.DEPT_NAME (TITLE 'Department'),
+    d.LOCATION (TITLE 'Location'),
+    d.BUDGET (FORMAT 'ZZZ,ZZZ,ZZ9.99')(TITLE 'Budget'),
+    COUNT(e.EMP_ID) (TITLE 'Employees'),
+    COALESCE(AVG(e.SALARY), 0) (FORMAT 'ZZZ,ZZ9.99')(TITLE 'Avg Salary'),
+    COALESCE(SUM(e.SALARY), 0) (FORMAT 'ZZZ,ZZZ,ZZ9.99')(TITLE 'Total Payroll'),
+    d.BUDGET - COALESCE(SUM(e.SALARY), 0) (FORMAT 'ZZZ,ZZZ,ZZ9.99')(TITLE 'Remaining Budget')
+FROM DEPARTMENT d
+LEFT JOIN EMPLOYEE e ON d.DEPT_ID = e.DEPT_ID
+GROUP BY d.DEPT_NAME, d.LOCATION, d.BUDGET
+ORDER BY d.DEPT_NAME;
+
+.HEADING OFF;
+
+/* ========================================================================== */
+/* Report 3: Top Products by Revenue                                         */
+/* ========================================================================== */
+
+.HEADING 'TOP PRODUCTS BY REVENUE';
+
+SELECT
+    p.PRODUCT_NAME (TITLE 'Product'),
+    p.CATEGORY (TITLE 'Category'),
+    p.UNIT_PRICE (FORMAT 'ZZ,ZZ9.99')(TITLE 'Unit Price'),
+    COUNT(s.SALE_ID) (TITLE 'Sales Count'),
+    COALESCE(SUM(s.QUANTITY), 0) (TITLE 'Total Qty'),
+    COALESCE(SUM(s.SALE_AMOUNT), 0) (FORMAT 'ZZZ,ZZ9.99')(TITLE 'Total Revenue')
+FROM PRODUCT p
+LEFT JOIN SALES s ON p.PRODUCT_ID = s.PRODUCT_ID
+GROUP BY p.PRODUCT_NAME, p.CATEGORY, p.UNIT_PRICE
+ORDER BY COALESCE(SUM(s.SALE_AMOUNT), 0) DESC;
+
+.HEADING OFF;
+
+/* ========================================================================== */
+/* Report 4: Sales by Region                                                 */
+/* ========================================================================== */
+
+.HEADING 'SALES PERFORMANCE BY REGION';
+
+SELECT
+    REGION (TITLE 'Region'),
+    COUNT(*) (TITLE 'Transactions'),
+    SUM(QUANTITY) (TITLE 'Units Sold'),
+    MIN(SALE_AMOUNT) (FORMAT 'ZZ,ZZ9.99')(TITLE 'Min Sale'),
+    AVG(SALE_AMOUNT) (FORMAT 'ZZ,ZZ9.99')(TITLE 'Avg Sale'),
+    MAX(SALE_AMOUNT) (FORMAT 'ZZ,ZZ9.99')(TITLE 'Max Sale'),
+    SUM(SALE_AMOUNT) (FORMAT 'ZZZ,ZZ9.99')(TITLE 'Total Revenue')
+FROM SALES
+GROUP BY REGION
+ORDER BY SUM(SALE_AMOUNT) DESC;
+
+.HEADING OFF;
+
+/* ========================================================================== */
+/* Report Summary                                                             */
+/* ========================================================================== */
+
+.SET TITLEDASHES ON;
+SELECT '*** All reports completed successfully! ***' AS STATUS;
+
+.LOGOFF;
+.QUIT 0;
