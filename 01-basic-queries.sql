@@ -3,9 +3,6 @@
 -- Use this in SQL Assistant to practice fundamental SELECT statements
 -- ============================================================================
 
--- Set working database
-DATABASE ${DB_USERNAME}_DEMO;
-
 -- ============================================================================
 -- Task 1: Simple SELECT
 -- ============================================================================

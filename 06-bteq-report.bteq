@@ -7,9 +7,6 @@
 /* Connect using environment variables */
 .LOGON ${DB_HOST}/${DB_USERNAME},${DB_PASSWORD};
 
-/* Set database context */
-DATABASE ${DB_USERNAME}_DEMO;
-
 /* Configure report format */
 .SET WIDTH 132;
 .SET PAGELENGTH 60;

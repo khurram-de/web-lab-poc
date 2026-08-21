@@ -7,9 +7,6 @@
 /* Connect using environment variables */
 .LOGON ${DB_HOST}/${DB_USERNAME},${DB_PASSWORD};
 
-/* Set database context */
-DATABASE ${DB_USERNAME}_DEMO;
-
 /* Configure export settings */
 .SET WIDTH 200;
 .SET RECORDMODE OFF;

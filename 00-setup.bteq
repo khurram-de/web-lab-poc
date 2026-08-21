@@ -10,9 +10,6 @@
 .SET WIDTH 132;
 .SET TITLEDASHES OFF;
 
-/* Set working database (database must already exist) */
-DATABASE ${DB_USERNAME}_DEMO;
-
 /* Create DEPARTMENT table */
 CREATE TABLE DEPARTMENT (
     DEPT_ID INTEGER NOT NULL,

@@ -4,7 +4,7 @@ This workspace contains sample data and scripts for Teradata training exercises.
 
 ## Database Schema
 
-**Database**: `${DB_USERNAME}_DEMO` (must be pre-created before running setup scripts)
+**Database**: `${DB_USERNAME}_DEMO` (pre-created, user's only accessible database)
 
 **Tables**:
 - `DEPARTMENT` - Department information
@@ -28,9 +28,16 @@ This workspace contains sample data and scripts for Teradata training exercises.
 - `05-bteq-export.bteq` - Export data to file
 - `06-bteq-report.bteq` - Formatted report generation
 
-### MLOAD Scripts
-- `07-mload-sales.mload` - Bulk load sales data
-- `sales_data.txt` - Sample data for MLOAD
+### TPT (Teradata Parallel Transporter) Scripts
+- `run_tpt.sh` - Bulk load sales data using TPT
+- `sales_data.txt` - Sample data for TPT load
+
+### Jupyter Notebook
+- `teradata-vantage-demo.ipynb` - Python data analysis notebook for Teradata Vantage
+  - Connects to Teradata using environment variables
+  - Demonstrates SQL queries with pandas DataFrames
+  - Includes data visualizations (matplotlib, seaborn)
+  - Advanced analytics and summary statistics
 
 ## Getting Started
 
@@ -38,7 +45,8 @@ This workspace contains sample data and scripts for Teradata training exercises.
 
 1. **In SQL Assistant**: Open `00-setup.sql` and run to create tables and load data
 2. **In TD Terminal**: Try BTEQ scripts with `bteq < 05-bteq-export.bteq`
-3. **For MLOAD**: Run `mload < 07-mload-sales.mload`
+3. **For TPT bulk load**: Run `./run_tpt.sh` (truncates and reloads SALES table)
+4. **In JupyterHub**: Open `teradata-vantage-demo.ipynb` for Python-based data analysis with visualizations
 
 ## Environment Variables
 

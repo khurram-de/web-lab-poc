@@ -1,11 +1,8 @@
 -- ============================================================================
 -- SYCLOPS Lab Setup - Table Creation and Sample Data
 -- Use this script in SQL Assistant (already connected)
--- Database must already exist: ${DB_USERNAME}_DEMO
+-- Users have access to only one database: ${DB_USERNAME}_DEMO
 -- ============================================================================
-
--- Set default database for convenience
-DATABASE ${DB_USERNAME}_DEMO;
 
 -- ============================================================================
 -- Table: DEPARTMENT
